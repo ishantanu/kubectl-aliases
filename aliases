@@ -1,0 +1,112 @@
+# kubectl aliases
+
+# --- kubectl get ---
+alias kgetpo="kubectl get pods"
+alias kgetposrc="kubectl get pods --sort-by='.status.containerStatuses[0].restartCount'" # sort pods by restart count
+alias kgetpow="kubectl get pods -o wide"
+alias kgetpvc="kubectl get pvc"
+alias kgetsvc="kubectl get svc"
+alias kgetsts="kubectl get sts"
+alias kgetsc="kubectl get storageclass"
+alias kgetno="kubectl get nodes"
+
+# --- kubectl describe ---
+alias kdescdep="kubectl describe deployment"
+alias kdescdepan="kubectl describe deployments --all-namespaces"
+alias kdescno="kubectl describe node"
+alias kdescpoan="kubectl describe pod --all-namespaces"
+alias kdescpo="kubectl describe pod"
+alias kdescsvc="kubectl describe svc"
+alias kdescsts="kubectl describe sts"
+alias kdescpvc="kubectl describe pvc"
+
+# --- kubectl delete ---
+alias kdelpo="kubectl delete pod"
+alias kdelsvc="kuebctl delete svc"
+alias kdelpvc="kubectl delete pvc"
+alias kdelsts="kubectl delete sts"
+
+# --- kubectl logs ---
+alias klogsf="kubectl logs -f"
+
+# -- kubectl config ---
+alias kconfview="kubectl config view"
+alias kconfviewcc="kubectl config view current-context"
+alias kconfviewmf="kubectl config view --minify --flatten"
+
+# --- kubectl api resources ---
+alias kapires="kubectl api-resources"
+
+# --- kubectl expose ---
+alias kexppo="kubectl expose pod"
+alias kexpsvc="kubectl expose svc"
+alias kexprc="kubectl expose rc"
+alias kexprs="kubectl expose rs"
+alias kexpdep="kubectl expose dep"
+
+# --- kubectl secrets ---
+kgetsec () {
+
+  if [[ -z "$1" ]]
+  then
+      kubectl get secrets
+  elif [[ "$1" == "used" ]]
+  then
+     kubectl get pods -o json | jq '.items[].spec.containers[].env[]?.valueFrom.secretKeyRef.name' | grep -v null | sort | uniq
+  else
+    # display usage if wrong args are passed
+    echo "Usage: kgetsec - Describes all secrets"
+    echo "Parameters: "
+    echo "   used - Shows curently used secrets by a pod"
+    echo "Example:"
+    echo "   kgetsec used"
+  fi
+}
+
+# --- kubectl edit ---
+kedit () {
+
+   case "$1" in
+      svc)
+         if [[ ("$2" != "help") && (-z "$3") ]]
+         then
+             kubectl edit svc
+         elif [[ "$1" == "help" && (-z "$3") ]]
+         then
+            echo "Usage: kedit svc service-name - Edit a service with default editor"
+            echo "Parameters: "
+            echo "   editor - Edit a service with an editor of your choice"
+            echo "Example:"
+            echo "   kedit svc nano service-name"
+         else
+            KUBE_EDITOR="$2" kubectl edit svc
+         fi
+         ;;
+      dep)
+         if [[ ("$2" != "help") && (-z "$3") ]]
+         then
+             kubectl edit svc
+         elif [[ "$1" == "help" && (-z "$3") ]]
+         then
+            echo "Usage: kedit dep deployment-name - Edit a deployment with default editor"
+            echo "Parameters: "
+            echo "   editor - Edit a deployment with an editor of your choice"
+            echo "Example:"
+            echo "   kedit dep nano deployment-name"
+         else
+            KUBE_EDITOR="$2" kubectl edit deployment
+         fi
+         ;;
+      *)
+        echo "============================"
+        echo "Edit a service or deployment"
+        echo "============================"
+        echo "Usage: kedit svc/dep service-name/deployment-name - Edit a deployment/service with default editor (VIM FTW)"
+        echo " "
+        echo "Parameters: "
+        echo "   editor - Edit a service/deployment with an editor of your choice"
+        echo "Example:"
+        echo "   kedit svc nano service-name"
+        echo "   kedit dep nano deployment-name"
+   esac
+}
