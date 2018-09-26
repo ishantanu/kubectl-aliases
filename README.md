@@ -1,0 +1,2 @@
+# kubectl-aliases
+Kubectl aliases
