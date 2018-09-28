@@ -20,6 +20,21 @@ alias kdescsvc="kubectl describe svc"
 alias kdescsts="kubectl describe sts"
 alias kdescpvc="kubectl describe pvc"
 
+# -- kubectl create ---
+alias kcreatens="kubectl create namespace"
+alias kcreatecm="kubectl create configmap"
+alias kcreatedep="kubectl create deployment"
+alias kcreatesvc="kubectl create svc"
+alias kcreatecr="kubectl create clusterrole"
+alias kcreatecrb="kubectl create clusterrolebinding"
+alias kcreatejob="kubectl create job"
+alias kcreaterb="kubectl create rolebinding"
+alias kcreatesa="kubectl create serviceaccount"
+alias kcreaterole="kubectl create role"
+alias kcreatequota="kubectl create quota"
+alias kcreatepc="kubectl create priorityclass"
+alias kcreatepdb="kubectl create poddisruptionbudget"
+
 # --- kubectl delete ---
 alias kdelpo="kubectl delete pod"
 alias kdelsvc="kuebctl delete svc"
