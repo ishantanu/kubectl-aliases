@@ -25,6 +25,7 @@ alias kdelpo="kubectl delete pod"
 alias kdelsvc="kuebctl delete svc"
 alias kdelpvc="kubectl delete pvc"
 alias kdelsts="kubectl delete sts"
+alias kdelsec="kubectl delete secret"
 
 # --- kubectl logs ---
 alias klogsf="kubectl logs -f"
@@ -61,6 +62,79 @@ kgetsec () {
     echo "Example:"
     echo "   kgetsec used"
   fi
+}
+
+# create secrets
+create_sec_help() {
+    case "$1" in
+      args0)
+       echo "Usage: kcreatesec - Create a secret with username and password"
+       echo "Parameters: "
+       echo "   -s - name of the secret"
+       echo "   -u - username"
+       echo "   -p - password"
+       echo "Example:"
+       echo "   kcreatesec -s secretname -u superuser -p superpassword"
+       ;;
+     args1)
+       echo "Missing parameter. Please supply both username and passwords"
+       echo "Usage: kcreatesec - Create a secret with username and password"
+       echo "Parameters: "
+       echo "   -s - name of the secret"
+       echo "   -u - username"
+       echo "   -p - password"
+       echo "Example:"
+       echo "   kcreatesec -s secretname -u superuser -p superpassword"
+       ;;
+     args2)
+       echo "Incorrect parameters supplied."
+       echo "Usage: kcreatesec - Create a secret with username and password"
+       echo "Parameters: "
+       echo "   -s - name of the secret"
+       echo "   -u - username"
+       echo "   -p - password"
+       echo "Example:"
+       echo "   kcreatesec -s secretname -u superuser -p superpassword"
+       ;;
+   esac
+}
+
+kcreatesec() {
+    if [[ ("$#" -eq 0) || ("$1" == "help") ]]
+    then
+       create_sec_help "args0"
+    elif [[ ("$#" -eq 1) ]]
+    then
+       create_sec_help "args1"
+    elif [[ ("$3" != "-u") || ("$5" != "-p") ]]
+    then
+       create_sec_help "args2"
+    fi
+    while getopts "s:u:p:" opt; do
+       case "$opt" in
+          s) secret_name="$OPTARG"
+            ;;
+          u) user_name="$OPTARG"
+            ;;
+          p) password="$OPTARG"
+            ;;
+          \?) create_sec_help "args2"
+        esac
+     done
+cat <<EOF > "${secret_name}".yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ${secret_name}
+type: Opaque
+data:
+  password: $(echo -n ${user_name} | base64)
+  username: $(echo -n ${password} | base64)
+EOF
+echo "${secret_name}.yml file has been created in current directory."
+echo "Creating the secret from ${secret_name}.yml"
+kubectl create -f ${secret_name}.yml
+
 }
 
 # --- kubectl edit ---
@@ -110,3 +184,7 @@ kedit () {
         echo "   kedit dep nano deployment-name"
    esac
 }
+
+# --- Modify pod related resources ---
+alias klabelpo="kubectl label pod"
+alias kannopo="kubectl annotate pod"
