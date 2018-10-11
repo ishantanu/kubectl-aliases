@@ -34,6 +34,8 @@ alias kcreaterole="kubectl create role"
 alias kcreatequota="kubectl create quota"
 alias kcreatepc="kubectl create priorityclass"
 alias kcreatepdb="kubectl create poddisruptionbudget"
+alias kcreatesc="kubectl create storageclass"
+
 
 # --- kubectl delete ---
 alias kdelpo="kubectl delete pod"
@@ -52,6 +54,7 @@ alias kconfviewmf="kubectl config view --minify --flatten"
 
 # --- kubectl api resources ---
 alias kapires="kubectl api-resources"
+alias kapiresw="kubectl api-resources -o wide"
 
 # --- kubectl expose ---
 alias kexppo="kubectl expose pod"
@@ -203,3 +206,18 @@ kedit () {
 # --- Modify pod related resources ---
 alias klabelpo="kubectl label pod"
 alias kannopo="kubectl annotate pod"
+
+# --- Node related modifications
+alias klabelno="kubectl label node"
+alias kgetextip="kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type==\"ExternalIP\")].address}'"
+
+# --- Get events sorted by ts ---
+alias kgetevents="kubectl get events --sort-by=.metadata.creationTimestamp"
+
+# -- Cluster related ---
+alias kcordon="kubectl cordon"
+alias kdrain="kubectl drain"
+alias kuncordon="kubectl uncordon"
+alias ktopno="kubectl top node"
+alias kcinfo="kubectl cluster-info"
+alias kcidump="kubectl cluster-info dump"
